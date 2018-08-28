@@ -1,7 +1,8 @@
 
 require.config({
 	paths:{
-		jquery:'jquery-1.10.2.min'
+		jquery:'jquery-1.10.2.min',
+		jqueryUI: 'http://code.jquery.com/ui/1.10.4/jquery-ui'
 	}
 });
 
@@ -21,7 +22,8 @@ require(['jquery','window'],function($,w){
 			y:50,
 			hasCloseBtn: true,
 			skinClassName: "window_skin_a",
-			text4AlertBtn: "OK"
+			text4AlertBtn: "OK",
+			dragHandle: ".window_header"
 		});
 	});
 });

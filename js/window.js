@@ -1,5 +1,5 @@
 
-define(['jquery'],function($){
+define(['jquery','jqueryUI'],function($,$UI){
 	function Window(){
 		this.cfg = {
 			width: 500,
@@ -8,6 +8,9 @@ define(['jquery'],function($){
 			content: "",
 			skinClassName: null,
 			hasCloseBtn: false,
+			hasMask: true,
+			isDraggable: true,
+			dragHandle: null,
 			text4AlertBtn: "确定",
 			handler4AlertBtn: null,
 			handler4CloseBtn: null
@@ -24,11 +27,19 @@ define(['jquery'],function($){
 					'<div class="window_footer"><input class="window_alertBtn" type="button" value="'+CFG.text4AlertBtn+'" /></div>'+
 				'</div>'
 			);
-			boundingBox.appendTo("body");		
-			var btn = boundingBox.find(".window_alertBtn");
+				
+			var btn = boundingBox.find(".window_alertBtn");			
+			var mask = null;
+			if(CFG.hasMask){
+				mask = $('<div class="window_mask"></div>');
+				mask.appendTo("body");
+			}
+			//appendTo 后添加的元素会在先添加的元素上方 所以 将弹出窗口放在模态后面
+			boundingBox.appendTo("body");	
 			btn.click(function(){
 				CFG.handler4AlertBtn && CFG.handler4AlertBtn();
 				boundingBox.remove();
+				mask && mask.remove(); 
 			});
 			
 			boundingBox.css({
@@ -44,10 +55,18 @@ define(['jquery'],function($){
 				closeBtn.click(function(){
 					CFG.handler4CloseBtn && CFG.handler4CloseBtn();
 					boundingBox.remove();
+					mask && mask.remove(); 
 				});
 			}
 			if(CFG.skinClassName){
 				boundingBox.addClass(CFG.skinClassName);
+			}
+			if(CFG.isDraggable){
+				if(CFG.dragHandle){
+					boundingBox.draggable({handle:CFG.dragHandle});
+				}else{
+					boundingBox.draggable();
+				}			
 			}
 			
 			

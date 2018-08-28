@@ -42,8 +42,6 @@ require(['jquery','window'],function($,w){
 			text4ConfirmBtn: "是",
 			text4CancelBtn: "否",
 			dragHandle: ".window_header",
-			
-			hasCloseBtn: true,
 			skinClassName: "window_skin_a"		
 		}).on("confirm",function(){alert("确定");
 		}).on("cancel",function(){alert("取消");
@@ -79,7 +77,8 @@ require(['jquery','window'],function($,w){
 			width:300,
 			height:150,
 			y:50,
-			hasCloseBtn:true				
+			hasCloseBtn:true,
+		
 		});
 	});
 });

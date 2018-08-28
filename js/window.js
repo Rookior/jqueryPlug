@@ -1,5 +1,5 @@
 
-define(['jquery','jqueryUI'],function($,$UI){
+define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
 	function Window(){
 		this.cfg = {
 			width: 500,
@@ -15,88 +15,74 @@ define(['jquery','jqueryUI'],function($,$UI){
 			handler4AlertBtn: null,
 			handler4CloseBtn: null
 		};
-		this.handlers = {};
 	}
 	
-	Window.prototype = {
+	Window.prototype =  $.extend({},new widget.Widget(),{
 		
-		alert: function(cfg){
-			var CFG = $.extend(this.cfg,cfg);
-			var boundingBox = $(
+		renderUI:function(){
+			this.boundingBox = $(
 				'<div class="window_boundingBox">'+
-					'<div class="window_header">'+CFG.title+'</div>'+
-					'<div class="window_body">'+CFG.content+'</div>'+
-					'<div class="window_footer"><input class="window_alertBtn" type="button" value="'+CFG.text4AlertBtn+'" /></div>'+
+					'<div class="window_header">'+this.cfg.title+'</div>'+
+					'<div class="window_body">'+this.cfg.content+'</div>'+
+					'<div class="window_footer"><input class="window_alertBtn" type="button" value="'+this.cfg.text4AlertBtn+'" /></div>'+
 				'</div>'
 			);
-				
-			btn = boundingBox.find(".window_alertBtn");			
-			mask = null;
-			that = this;
-			if(CFG.hasMask){
-				mask = $('<div class="window_mask"></div>');
-				mask.appendTo("body");
+			
+			if(this.cfg.hasMask){
+				this._mask = $('<div class="window_mask"></div>');
+				this._mask.appendTo("body");
 			}
-			//appendTo 后添加的元素会在先添加的元素上方 所以 将弹出窗口放在模态后面
-			boundingBox.appendTo("body");	
-			btn.click(function(){
-				boundingBox.remove();
-				mask && mask.remove(); 
+			if(this.cfg.hasCloseBtn){
+				this.boundingBox.append('<span class="window_closeBtn">X</span>');
+			}
+			this.boundingBox.appendTo(document.body);
+		},
+		bindUI: function(){
+			var that =this;
+			this.boundingBox.delegate(".window_alertBtn","click",function(){
 				that.fire("alert");
+				that.destory();
+			}).delegate(".window_closeBtn","click",function(){
+				that.fire("close");
+				that.destory();
+			});
+			if(this.cfg.handler4AlertBtn){
+				this.on("alert",this.cfg.handler4AlertBtn);
+			}
+			if(this.cfg.handler4CloseBtn){
+				this.on("close",this.cfg.handler4CloseBtn);
+			}
+		},
+		syncUI: function(){
+			this.boundingBox.css({
+				width: this.cfg.width + "px",
+				height: this.cfg.height + "px",
+				left: (this.cfg.x || (window.innerWidth - this.cfg.width)/2) + "px",
+				top: (this.cfg.y || (window.innerHeight - this.cfg.height)/2 ) + "px"
 			});
 			
-			boundingBox.css({
-				width: CFG.width + "px",
-				height: CFG.height + "px",
-				left: (CFG.x || (window.innerWidth - CFG.width)/2) + "px",
-				top: (CFG.y || (window.innerHeight - CFG.height)/2 ) + "px"
-			});
-			
-			if(CFG.hasCloseBtn){
-				var closeBtn = $('<span class="window_closeBtn">X</span>');
-				closeBtn.appendTo(boundingBox);
-				closeBtn.click(function(){
-					boundingBox.remove();
-					mask && mask.remove(); 
-					that.fire("close");
-				});
+			if(this.cfg.skinClassName){
+				this.boundingBox.addClass(this.cfg.skinClassName);
 			}
-			if(CFG.skinClassName){
-				boundingBox.addClass(CFG.skinClassName);
-			}
-			if(CFG.isDraggable){
-				if(CFG.dragHandle){
-					boundingBox.draggable({handle:CFG.dragHandle});
+			if(this.cfg.isDraggable){
+				if(this.cfg.dragHandle){
+					this.boundingBox.draggable({handle:this.cfg.dragHandle});
 				}else{
-					boundingBox.draggable();
-				}			
+					this.boundingBox.draggable();
+				}	
 			}
-			if(CFG.handler4AlertBtn){
-				this.on("alert",CFG.handler4AlertBtn);
-			}
-			if(CFG.handler4CloseBtn){
-				this.on("close",CFG.handler4CloseBtn);
-			}
-			
-			
+		},
+		destructor: function(){
+			this._mask && this._mask.remove();
+		},
+		alert: function(cfg){
+			$.extend(this.cfg,cfg);
+			this.render();
+			return this;
 		},
 		confirm: function(){},
-		prompt: function(){},
-		on : function(type,handler){
-			if (typeof this.handlers[type]=='undefined') {
-				this.handlers[type]=[];
-			}
-			this.handlers[type].push(handler);
-		},
-		fire : function(type,data){
-			if (this.handlers[type] instanceof Array) {
-				var handlers = this.handlers[type];
-				for(var i=0,len=handlers.length;i<len;i++){
-					handlers[i](data);
-				}
-			};
-		},
-	}
+		prompt: function(){}
+	});
 	return {
 		Window:Window
 	}

@@ -25,11 +25,10 @@ require(['jquery','window'],function($,w){
 			skinClassName: "window_skin_a",
 			text4AlertBtn: "OK",
 			dragHandle: ".window_header"
+		}).on("alert",function(){alert("the second alert handler");
+		}).on("close",function(){alert("the second close handler");
 		});
-		win.on("alert",function(){alert("the second alert handler")});
-		win.on("alert",function(){alert("the third alert handler")});
-		win.on("close",function(){alert("the second close handler")});		
-		
+		win.on("alert",function(){alert("the third alert handler");});
 	});
 });
 

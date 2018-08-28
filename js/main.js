@@ -19,7 +19,8 @@ require(['jquery','window'],function($,w){
 			width:300,
 			height:150,
 			y:50,
-			hasCloseBtn: true
+			hasCloseBtn: true,
+			skinClassName: "window_skin_a"
 		});
 	});
 });

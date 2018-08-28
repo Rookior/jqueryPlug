@@ -52,11 +52,15 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
 						
 			this.boundingBox = $(
 				'<div class="window_boundingBox">'+
-					'<div class="window_header">'+this.cfg.title+'</div>'+
 					'<div class="window_body">'+this.cfg.content+'</div>'+
-					'<div class="window_footer">'+footerContent+'</div>'+
 				'</div>'
 			);
+			
+			if(this.cfg.winType !="common"){
+				this.boundingBox.prepend('<div class="window_header">'+this.cfg.title+'</div>');
+				this.boundingBox.append('<div class="window_footer">'+footerContent+'</div>');
+			}
+			
 			
 			if(this.cfg.hasMask){
 				this._mask = $('<div class="window_mask"></div>');
@@ -145,7 +149,13 @@ define(['widget','jquery','jqueryUI'],function(widget,$,$UI){
 			this.render();
 			this._promptInput.focus();
 			return this;
+		},
+		common: function(cfg){
+			$.extend(this.cfg,cfg,{winType:"common"});
+			this.render();
+			return this;
 		}
+		
 	});
 	return {
 		Window:Window
